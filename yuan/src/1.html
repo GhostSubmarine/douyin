@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS 扇形动画</title>
+  <style>
+    /* 页面基本设置 */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    /* 外部圆圈样式 */
+    .outer-circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid rgba(0, 255, 255, 0.7);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff; /* 圆圈的背景颜色 */
+    }
+
+    /* 内部扇形的样式 */
+    .inner-sector {
+      position: absolute;
+      width: 200px;  /* 外部圆圈的半径 */
+      height: 200px; /* 外部圆圈的半径 */
+      background: conic-gradient(#00ffff 0deg 0deg); /* 初始化时无扇形 */
+      border-radius: 50%;
+      clip-path: circle(50% at 50% 50%); /* 保持圆形 */
+      animation: rotateAndIncrease 5s infinite linear;
+    }
+
+    /* 动画定义，内部圆圈沿圆形路径旋转并增大 */
+    @keyframes rotateAndIncrease {
+      0% {
+        transform: rotate(0deg);
+        background: conic-gradient(#00ffff 0deg 0deg); /* 初始无扇形 */
+      }
+      50% {
+        transform: rotate(180deg);
+        background: conic-gradient(#00ffff 0deg 180deg); /* 扇形覆盖 50% */
+      }
+      100% {
+        transform: rotate(360deg);
+        background: conic-gradient(#00ffff 0deg 360deg); /* 扇形覆盖 100% */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="outer-circle">
+    <div class="inner-sector"></div>
+  </div>
+
+</body>
+</html>
