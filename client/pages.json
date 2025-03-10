@@ -1,17 +1,117 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "有趣",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+				"path" : "pages/index/subIndex",
+				"style" : 
+				{
+					"navigationBarTitleText" : "开通微信订阅服务",
+					"enablePullDownRefresh" : false,
+					"navigationBarBackgroundColor": "#FF7D36",
+					"navigationStyle": "custom"
+				}
+		},
+		{
+			"path": "pages/video/video",
+			"style": {
+				"navigationBarTitleText": "有趣",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false,
+				"backgroundColor": "#FFFFFF",
+				"backgroundColorTop": "#FFFFFF"
+			}
+		},
+		{
+			"path": "pages/member/information",
+			"style": {
+				"navigationBarTitleText": "会员中心",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/member/member",
+			"style": {
+				"navigationBarTitleText": "会员充值",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/diamond/diamond",
+			"style": {
+				"navigationBarTitleText": "钻石充值",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/phoneBind/accountBind",
+			"style": {
+				"navigationBarTitleText": "账号绑定",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path" : "pages/index/download",
+			"style" : 
+			{
+				"navigationBarTitleText" : "下载APP",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/mine/agreement",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"enablePullDownRefresh" : false
 			}
 		}
+		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"app-plus": {
+			"background": "#efeff4"
+		}
 	},
-	"uniIdRouter": {}
+	"tabBar": {
+		"color": "#666666",	
+		"selectedColor": "#FF7D36",
+		"fontSize": "30px",
+		"spacing": "5px",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/images/video.png",
+				"selectedIconPath": "static/images/video_select.png",
+				"text": "视频"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"iconPath": "static/images/mine.png",
+				"selectedIconPath": "static/images/mine_select.png",
+				"text": "我的"
+			}
+		]
+	}
 }
