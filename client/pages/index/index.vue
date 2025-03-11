@@ -1,210 +1,105 @@
 <template>
-	<template>
-		<view class="waterfall">
-			<uv-waterfall ref="waterfall" v-model="state.list" :columnGap="state.columnGap" :add-time="10" @changeList="changeList">
-				<!-- 第一列数据 -->
-				<template v-slot:list1>
-					<!-- 为了磨平部分平台的BUG，必须套一层view -->
-					<view>
-						<view v-for="(item, index) in state.list1" :key="item.id" class="waterfall-item">
-							<view class="waterfall-item__image" :style="[imageStyle(item)]" @click="playVideo(item)">
-								<image :src="item.thumb" mode="aspectFill"></image>
-							</view>
-							<view class="waterfall-item__ft">
-								<view class="waterfall-item__ft__remark">{{item.remark}}</view>
-								<view class="waterfall-item__ft__info">
-									<view class="waterfall-item__ft__info_left">
-										<image :src="item.user_info?.pic"></image>
-										<view class="waterfall-item__ft__username">{{item.user_info?.name}}</view>
-									</view>
-									<view class="waterfall-item__ft__info_right">
-										<image src="/static/images/home/heart.png"></image>
-										<!-- <image src="/static/images/home/redheart.png"></image> -->
-										<view class="value">{{item.likes}}</view>
-									</view>
-								</view>
-							</view>
-							<image class="play" src="/static/images/home/play.png" @click="playVideo(item)"></image>
-						</view>
-					</view>
-				</template>
-				<!-- 第二列数据 -->
-				<template v-slot:list2>
-					<!-- 为了磨平部分平台的BUG，必须套一层view -->
-					<view>
-						<view v-for="(item, index) in state.list2" :key="item.id" class="waterfall-item">
-							<view :style="[imageStyle(item)]" @click="playVideo(item)">
-								<image :src="item.thumb" mode="aspectFill" ></image>
-							</view>
-							<view class="waterfall-item__ft">
-								<view class="waterfall-item__ft__remark">{{item.remark}}</view>
-								<view class="waterfall-item__ft__info">
-									<view class="waterfall-item__ft__info_left">
-										<image :src="item.user_info?.pic"></image>
-										<view class="waterfall-item__ft__username">{{item.user_info?.name}}</view>
-									</view>
-									<view class="waterfall-item__ft__info_right">
-										<image src="/static/images/home/heart.png"></image>
-										<!-- <image src="/static/images/home/redheart.png"></image> -->
-										<view class="value">{{item.likes}}</view>
-									</view>
-								</view>
-							</view>
-							<image class="play" src="/static/images/home/play.png" @click="playVideo(item)"></image>
-						</view>
-					</view>
-				</template>
-			</uv-waterfall>
-			<uv-load-more :status="loadStatus"></uv-load-more>
-		</view>
-	</template>
-
+	<view class="container" :style="{height: containerHieght}">
+		<swiper class="swiper" :vertical="true" :style="{height: containerHieght}" @change="changeSwiper">
+			<swiper-item v-for="item,index in videoSrcArr" :key="index">
+				<view class="swiper-item">
+					<y-video-player :item="item" :currnetIndex="currnetSwiper" :displayArr="displayArr"
+						:containerHieght="containerHieght">
+					</y-video-player>
+				</view>
+			</swiper-item>
+		</swiper>
+		<TabBar />
+	</view>
 </template>
 <script lang="ts" setup>
-import { onReady,onPullDownRefresh,onReachBottom } from '@dcloudio/uni-app'
-import { ref, reactive, computed } from 'vue';
-import { homeList } from '../../api/index'
-import route from '@/uni_modules/uv-ui-tools/libs/util/route.js';
-	const waterfall = ref(null)
-	const loadStatus = ref('loadmore')
-	const page = ref(1)
-	const state = reactive({
-		list: [], // 瀑布流全部数据
-		list1: [], // 瀑布流第一列数据
-		list2: [], // 瀑布流第二列数据
-		leftGap: 10,
-		rightGap: 10,
-		columnGap: 10
-	});
-	const changeList = (e) => {
-		state[e.name].push(e.value)
+	import TabBar from '@/components/tabbar/index.vue';
+	import { ref, watch } from 'vue';
+	import yVideoPlayer from '@/uni_modules/y-video-player/components/y-video-player/y-video-player.vue';
+	interface ImgVideoType {
+		file : string            // 文件地址
+		file_type : 1 | 2        // 文件类型
+		cureent_time ?: number   // 视频播放进度
+		[key : string] : any
 	}
-	const imageStyle = computed((item) => {
-		return item => {
-			const v = uni.upx2px(750) - state.leftGap - state.rightGap - state.columnGap;
-			const w = v / 2;
-			const rate = w / item.width;
-			const h = rate * 180;
-			return {
-				width: w + 'px',
-				height: h + 'px'
-			}
+	// video标签的高度，根据需求调整
+	const containerHieght = ref<string>('100vh');
+	// swiper当前所在位置
+	const currnetSwiper = ref<number>(0);
+	// 当前需要显示的数据
+	const displayArr = ref<ImgVideoType[]>([]);
+
+	const videoSrcArr = ref<ImgVideoType[]>([
+		{
+			file: '/static/28637069901-1-16.mp4',
+			file_type: 2,
+			cureent_time: 0,
+		},
+		{
+			file: '/static/28637069901-1-16.mp4',
+			file_type: 2,
+			cureent_time: 0,
+		},
+		{
+			file: '/static/28637069901-1-16.mp4',
+			file_type: 2,
+			cureent_time: 33,
+		},
+		{
+			file: '/static/28637069901-1-16.mp4',
+			file_type: 2,
+			cureent_time: 0,
+		},
+		{
+			file: '/static/28637069901-1-16.mp4',
+			file_type: 2,
+			cureent_time: 6,
+		},
+		{
+			file: '/static/28637069901-1-16.mp4',
+			file_type: 2,
+			cureent_time: 18,
+		},
+		{
+			file: '/static/28637069901-1-16.mp4',
+			file_type: 2,
+			cureent_time: 14,
+		},
+	])
+	videoSrcArr.value = videoSrcArr.value.map((item, index) => {
+		return {
+			...item,
+			index
 		}
 	})
-	const playVideo = (item:any)=>{
-		route({url:'/pages/video/video',params: item})
+	/**swpier切换事件*/
+	const changeSwiper = (e : any) : void => {
+		currnetSwiper.value = e.detail.current;
 	}
 
-	onPullDownRefresh(async () =>{
-				state.list = [];
-				waterfall?.value.clear();
-				state.list1 = [];
-				state.list2 = [];
-				state.list = (await homeList({page: page.value}) as any).list
-				uni.showToast({
-					icon: 'success',
-					title: '刷新成功'
-				})
-				uni.stopPullDownRefresh();
-	})
-	onReachBottom(async ()=>{
-		if(loadStatus.value == 'loadmore') {
-			loadStatus.value = 'loading';
-			page.value += 1
-			const res = await homeList({page: page.value}) as any
-			state.list.push.apply(state.list, res.list);
-			loadStatus.value = 'loadmore';
-		}	
-	})
-	onReady(async () => {
-		const res = await homeList({page: page.value}) as any
-		state.list = res.list
-	})
+	/**
+	 * 决定提前渲染多少个视频
+	 * @param {number} index 数组下标
+	 * @param {array} array 需要切割的数组
+	*/
+	function sliceArrayByIndex<T>(index : number, array : T[]) : T[] {
+		// 如果数组长度小于5位，直接返回整个数组
+		if (array.length < 5) {
+			return array;
+		}
+		// 计算新数组的起始位置，确保不会小于0，同时尽量保证能够取到5个元素
+		let start = index - 2;
+		if (start < 0) {
+			start = 0;
+		} else if (index + 2 >= array.length) {
+			start = array.length - 5; // 调整起始位置以确保数组长度为5
+		}
+		// 计算新数组的结束位置，确保不会超出数组长度
+		let end = start + 5;
+		return array.slice(start, end);
+	}
+	watch(currnetSwiper, (newVal) => {
+		displayArr.value = sliceArrayByIndex<ImgVideoType>(newVal, videoSrcArr.value);
+		console.log(displayArr.value)
+	}, { immediate: true })
 </script>
-
-<style lang="scss" scoped>
-	$show-lines: 1;
-	@import '@/uni_modules/uv-ui-tools/libs/css/variable.scss';
-	.waterfall{
-		width: 96%;
-		margin: 0 auto;
-	}
-	.waterfall-item {
-		// width: 48%;
-		position: relative;
-		overflow: hidden;
-		margin-top: 10px;
-		border-radius: 6px;
-		display: flex;
-		flex-direction: column;
-		.play{
-			width: 38rpx;
-			height: 38rpx;
-			position: absolute;
-			top: 8rpx;
-			right: 8rpx;
-		}
-	}
-
-	.waterfall-item__ft {
-		background: #F9FBFE;
-		display: flex;
-		flex-direction: column;
-		font-size: 36rpx;
-		font-family: PingFang SC, PingFang SC;
-		font-weight: 500;
-		padding-top: 12rpx;
-		padding-bottom: 12rpx;
-		
-		.waterfall-item__ft__remark{
-			width: 94%;
-			margin: 0 auto;
-			color: #151B29;
-			font-size: 32rpx;
-			line-height: 38rpx;
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 2;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-		.waterfall-item__ft__info{
-			width: 94%;
-			margin: 0 auto;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-top: 12rpx;
-			
-			.waterfall-item__ft__info_left{
-				display: flex;
-				align-items: center;
-				image{
-					width: 26rpx;
-					height: 26rpx;
-					border-radius: 4rpx;
-				}
-				.waterfall-item__ft__username{
-					margin-left: 8rpx;
-					font-size: 24rpx;
-					color: #0C3F7A;
-					white-space: nowrap;
-				}
-			}
-			.waterfall-item__ft__info_right{
-				display: flex;
-				align-items: center;
-				image{
-					width: 26rpx;
-					height: 26rpx;
-					border-radius: 4rpx;
-				}
-				.value{
-					margin-left: 8rpx;
-					font-size: 26rpx;
-					color: #666666;
-				}
-			}
-		}
-	}
-</style>
