@@ -23,7 +23,7 @@
 		[key : string] : any
 	}
 	// video标签的高度，根据需求调整
-	const containerHieght = ref<string>('100vh');
+	const containerHieght = ref<string>('80vh');
 	// swiper当前所在位置
 	const currnetSwiper = ref<number>(0);
 	// 当前需要显示的数据
