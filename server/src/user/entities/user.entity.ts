@@ -1,10 +1,14 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Video } from '../../video/entities/video.entity';
 
 @Entity()
 export class User {
-  @Column({ primary: true, generated: 'uuid' })
-  id: string;
+  @PrimaryGeneratedColumn() // Must match Video.authorId type
+  id: number;
+
+  // Add relation definition
+  @OneToMany(() => Video, video => video.author)
+  videos: Video[];
 
   @Column({ unique: true })
   username: string;
@@ -15,6 +19,9 @@ export class User {
   @Column({ default: '' })
   avatar: string;
 
-  @OneToMany(() => Video, video => video.author)
-  videos: Video[];
+  @Column({
+    name: 'created_at',
+    default: () => 'CURRENT_TIMESTAMP'
+  })
+  createdAt: Date;
 }

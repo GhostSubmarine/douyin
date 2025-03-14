@@ -1,10 +1,11 @@
 <template>
-	<view class="container" :style="{height: containerHieght}">
-		<swiper class="swiper" :vertical="true" :style="{height: containerHieght}" @change="changeSwiper">
+	<view class="container" :style="{height: '100%'}">
+		<Tabs />
+		<swiper class="swiper" :vertical="true" :style="{height: 'calc(100% - 188rpx)'}" @change="changeSwiper">
 			<swiper-item v-for="item,index in videoSrcArr" :key="index">
 				<view class="swiper-item">
 					<y-video-player :item="item" :currnetIndex="currnetSwiper" :displayArr="displayArr"
-						:containerHieght="containerHieght">
+						:containerHieght="'100%'">
 					</y-video-player>
 				</view>
 			</swiper-item>
@@ -14,7 +15,8 @@
 </template>
 <script lang="ts" setup>
 	import TabBar from '@/components/tabbar/index.vue';
-	import { ref, watch } from 'vue';
+	import Tabs from '@/components/tabs/index.vue';
+	import { ref, watch, reactive } from 'vue';
 	import yVideoPlayer from '@/uni_modules/y-video-player/components/y-video-player/y-video-player.vue';
 	interface ImgVideoType {
 		file : string            // 文件地址
@@ -22,8 +24,6 @@
 		cureent_time ?: number   // 视频播放进度
 		[key : string] : any
 	}
-	// video标签的高度，根据需求调整
-	const containerHieght = ref<string>('80vh');
 	// swiper当前所在位置
 	const currnetSwiper = ref<number>(0);
 	// 当前需要显示的数据
@@ -103,3 +103,9 @@
 		console.log(displayArr.value)
 	}, { immediate: true })
 </script>
+
+<style lang="less" scoped>
+	.swiper-item {
+		height: 100%;
+	}
+</style>
