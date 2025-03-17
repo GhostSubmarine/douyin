@@ -10,7 +10,7 @@ export default {
           password: "LiXin123..",
         });
         console.log("自动登录成功:", res);
-        uni.setStorageSync("token", res.token);
+        uni.setStorageSync("token", res.access_token);
       } catch (error) {
         console.error("自动登录失败:", error);
       }

@@ -11,24 +11,24 @@
         round
         width="140rpx"
         height="140rpx"
-        :src="userInfo.avatar"
+        :src="avatar"
         class="user-avatar"
       />
       <view class="count-wrapper">
         <view class="count-item">
-          <text class="count-num">{{ userInfo.follow }}</text>
+          <text class="count-num">{{ userInfo.follows ?? 0 }}</text>
           <text class="count-label">关注</text>
         </view>
         <view class="count-item">
-          <text class="count-num">{{ userInfo.fans }}</text>
+          <text class="count-num">{{ userInfo.fans ?? 0 }}</text>
           <text class="count-label">粉丝</text>
         </view>
         <view class="count-item">
-          <text class="count-num">{{ userInfo.like }}</text>
+          <text class="count-num">{{ userInfo.totalLikes }}</text>
           <text class="count-label">获赞</text>
         </view>
         <view class="count-item">
-          <text class="count-num">{{ userInfo.mutualFollow }}</text>
+          <text class="count-num">{{ userInfo.mutualFollow ?? 0 }}</text>
           <text class="count-label">互关</text>
         </view>
       </view>
@@ -39,25 +39,41 @@
 
 <script setup lang="ts">
 import TabBar from '@/components/tabbar/index.vue';
-import { reactive } from "vue";
-
+import { onMounted, reactive } from "vue";
+import { getUserInfoApi } from '@/api'
+import avatar from '@/static/avatar.png'
 interface UserInfo {
-  background: string;
-  avatar: string;
-  follow: number;
-  fans: number;
-  like: number;
-  mutualFollow: number;
+  id: number
+  videos: any[] // 根据实际视频数据结构替换 any
+  username: string
+  avatar: string
+  createdAt: string
+  totalLikes: number
+  totalCollects: number
+  videoStats: VideoStats
+  background: string
 }
 
+interface VideoStats {
+  totalVideos: number
+  totalLikes: number
+  totalCollects: number
+}
 const userInfo = reactive<UserInfo>({
   background: "/static/header-bg.png",
-  avatar: "/static/avatar.png",
-  follow: 235,
-  fans: 12345,
-  like: 23456,
-  mutualFollow: 23
-});
+  avatar
+} as UserInfo);
+const getUserInfo = () => {
+	getUserInfoApi()
+	.then(res => {
+		for (let key in res) {
+      userInfo[key] = res[key]
+    }
+	})
+}
+onMounted(() => {
+	getUserInfo()
+})
 </script>
 
 <style lang="less" scoped>

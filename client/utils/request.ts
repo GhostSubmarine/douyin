@@ -21,17 +21,16 @@ class HttpClient {
     this.initializeInterceptors();
   }
 
-  private async handleRequest<T>(promise: Promise<AxiosResponse<ApiResponse<T>>>): Promise<T> {
+  private async handleRequest<T>(promise: Promise<AxiosResponse<T>>): Promise<T> {
     try {
       const response = await promise;
-	  debugger
       const { data } = response;
 
-      if (data.code === '200') {
-        return data.data;
+      if (response.status === 201 || response.status === 200) {
+        return data;
       } else {
-        this.handleErrorResponse(data);
-        throw new Error(data.msg || 'Unknown error');
+        this.handleErrorResponse(response);
+        throw new Error(JSON.stringify(response) || 'Unknown error');
       }
     } catch (error) {
       console.error(error);
@@ -45,13 +44,13 @@ class HttpClient {
     window.location.href = '/account/login';
   }
 
-  private handleErrorResponse<T>(response: ApiResponse<T>) {
-    switch (response.code) {
-      case '401':
+  private handleErrorResponse<T>(response: AxiosResponse<T, any>) {
+    switch (response.status) {
+      case 401:
         this.handleUnauthorized();
         break;
       default:
-        console.error(`API Error: ${response.code}`, response.msg);
+        console.error(`API Error: ${response.status}`, response);
     }
   }
 
@@ -60,7 +59,7 @@ class HttpClient {
       async (config) => {
         const token = localStorage.getItem('token');
         if (token) {
-          config.headers['Authorization'] = token;
+          config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config;
       },
@@ -74,19 +73,19 @@ class HttpClient {
   }
 
   public async get<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
-    return this.handleRequest<R>(this.instance.get<ApiResponse<R>>(url, config));
+    return this.handleRequest<R>(this.instance.get<R>(url, config));
   }
 
   public async post<T, R>(url: string, data?: T, config?: AxiosRequestConfig): Promise<R> {
-    return this.handleRequest<R>(this.instance.post<ApiResponse<R>>(url, data, config));
+    return this.handleRequest<R>(this.instance.post<R>(url, data, config));
   }
 
   public async put<T, R>(url: string, data?: T, config?: AxiosRequestConfig): Promise<R> {
-    return this.handleRequest<R>(this.instance.put<ApiResponse<R>>(url, data, config));
+    return this.handleRequest<R>(this.instance.put<R>(url, data, config));
   }
 
   public async delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
-    return this.handleRequest<R>(this.instance.delete<ApiResponse<R>>(url, config));
+    return this.handleRequest<R>(this.instance.delete<R>(url, config));
   }
 }
 
