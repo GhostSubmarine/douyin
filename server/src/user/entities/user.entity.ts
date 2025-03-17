@@ -24,4 +24,11 @@ export class User {
     default: () => 'CURRENT_TIMESTAMP'
   })
   createdAt: Date;
+
+  // 添加统计字段（非数据库字段）
+  @Column({ type: 'int', default: 0 })
+  totalLikes: number;
+
+  @Column({ type: 'int', default: 0 })
+  totalCollects: number;
 }

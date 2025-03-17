@@ -1,9 +1,11 @@
-import { Entity, Column, ManyToOne, Index, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, Index, JoinColumn, CreateDateColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { Like } from './like.entity';
+import { Collect } from './collect.entity';
 
 @Entity()
 export class Video {
-  @Column({ primary: true, generated: 'uuid' })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ length: 100 })
@@ -36,7 +38,8 @@ export class Video {
   @Column({ 
     type: 'varchar',
     length: 255,
-    comment: '视频封面URL'
+    comment: '视频封面URL',
+    default: ''
   })
   coverUrl: string;
 
@@ -46,4 +49,18 @@ export class Video {
     default: 'draft'
   })
   status: string;
+
+  @OneToMany(() => Like, like => like.video)
+  likes: Like[];
+
+  @OneToMany(() => Collect, collect => collect.video)
+  collects: Collect[];
+
+  // 添加统计字段（可选）
+  @Column({ default: 0 })
+  likeCount: number;
+
+  // 添加统计字段（可选）
+  @Column({ default: 0 })
+  collectCount: number;
 }

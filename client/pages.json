@@ -11,14 +11,23 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "抖音"
 			}
 		},
 		{
 			"path" : "pages/upload/upload",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "上传视频"
+			}
+		},
+		{
+			"path" : "pages/mine/index",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"navigationBarBackButtonHidden": true,
+				"navigationStyle": "custom"
 			}
 		}
 	],

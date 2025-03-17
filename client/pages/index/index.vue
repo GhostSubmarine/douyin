@@ -10,12 +10,14 @@
 				</view>
 			</swiper-item>
 		</swiper>
-		<TabBar />
+		<VideoActionBar />
+		<TabBar :value="0" />
 	</view>
 </template>
 <script lang="ts" setup>
 	import TabBar from '@/components/tabbar/index.vue';
 	import Tabs from '@/components/tabs/index.vue';
+	import VideoActionBar from '../../components/video-action-bar/index.vue';
 	import { ref, watch, reactive } from 'vue';
 	import yVideoPlayer from '@/uni_modules/y-video-player/components/y-video-player/y-video-player.vue';
 	interface ImgVideoType {

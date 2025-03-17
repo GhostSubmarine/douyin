@@ -11,6 +11,14 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
+  // 新增获取全部用户方法
+  async getAllUsers() {
+    return this.userRepository.find({
+      select: ['id', 'username', 'avatar', 'createdAt', 'password'], // 排除敏感字段
+      order: { createdAt: 'DESC' }
+    });
+  }
+
   async findByUsername(username: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { username } });
   }
@@ -73,5 +81,25 @@ export class UserService {
       throw new NotFoundException('用户不存在');
     }
     return this.findUserProfile(userId);
+  }
+
+  async getUserById(id: number): Promise<User> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.videos', 'videos')
+      .loadRelationCountAndMap('user.totalLikes', 'videos.likes')
+      .loadRelationCountAndMap('user.totalCollects', 'videos.collects')
+      .where('user.id = :id', { id })
+      .getOne();
+  
+    if (!user) {
+      throw new NotFoundException('用户不存在');
+    }
+    
+    // 计算总数
+    user.totalLikes = user.videos.reduce((sum, video) => sum + video.likeCount, 0);
+    user.totalCollects = user.videos.reduce((sum, video) => sum + video.collectCount, 0);
+  
+    return user;
   }
 }

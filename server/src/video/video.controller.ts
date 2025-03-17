@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors, Body, Request } from '@nestjs/common';
+import { Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors, Body, Request, Param } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateVideoDto } from './dto/create-video.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Video')
 @Controller('video')
@@ -55,5 +56,24 @@ export class VideoController {
     @Request() req
   ) {
     return this.videoService.uploadVideo(req.user, file, createDto);
+  }
+
+  @Post(':id/like')
+  @UseGuards(AuthGuard('jwt'))
+  async likeVideo(
+    @Param('id') videoId: string,
+    @Request() req
+  ) {
+    return this.videoService.likeVideo(req.user.id, videoId);
+  }
+
+  @Post(':id/unlike')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: '取消点赞' })
+  async unlikeVideo(
+    @Param('id') videoId: string,
+    @Request() req
+  ) {
+    return this.videoService.unlikeVideo(req.user.id, videoId);
   }
 }
